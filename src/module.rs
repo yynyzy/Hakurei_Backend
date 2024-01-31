@@ -9,12 +9,9 @@ struct Claims {
     exp: usize,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-struct Claims {
-    aud: String,
-    exp: usize,  // 必须。 (validate_exp 在验证中默认为真值)。截止时间 (UTC 时间戳)
-    iat: usize,  // 可选。 发布时间 (UTC 时间戳)
-    iss: String, // 可选。 发布者
-    nbf: usize,  // 可选。 不早于 (UTC 时间戳)
-    sub: String, // 可选。 标题 (令牌指向的人)
+#[derive(Serialize, Deserialize, Clone, Debug)]
+#[serde(crate = "rocket::serde")]
+pub struct UserAuth {
+    pub id: i32,
+    pub key: String,
 }

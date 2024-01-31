@@ -3,16 +3,16 @@ use rocket::{
     serde::json::{serde_json::json, Value},
 };
 
-struct BasicAuthStruct {
-    username: String,
-    password: String,
-}
+// struct BasicAuthStruct {
+//     username: String,
+//     password: String,
+// }
 
-impl BasicAuthStruct {
-    fn from_header(header: &str) -> Option<BasicAuthStruct> {
-        let split_vec = header.split_whitespace().collect::<Vec<_>>();
-    }
-}
+// impl BasicAuthStruct {
+//     fn from_header(header: &str) -> Option<BasicAuthStruct> {
+//         let split_vec = header.split_whitespace().collect::<Vec<_>>();
+//     }
+// }
 
 #[post("/login", data = "<a>")]
 async fn login_user(a: String) -> Value {
