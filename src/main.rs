@@ -11,6 +11,7 @@ use rocket::{
     },
 };
 
+mod handlers;
 mod models;
 mod routes;
 mod services;
@@ -54,15 +55,6 @@ mod utils;
 //         }
 //         Outcome::Error((Status::Unauthorized, ()))
 //     }
-// }
-
-// #[post("/login", format = "application/json", data = "<basic_auth>")]
-// async fn login_user(basic_auth: Json<models::user::BasicAuthStruct>) -> Value {
-//     print!("{:?}", basic_auth);
-//     // 在数据库中查询 用户是否存在，存在就返回她的 id， 将id 给生成 token；
-//     let user_id: String = "67676916371637216371963".to_string();
-//     let token = get_token(&user_id);
-//     json!({ "token": token})
 // }
 
 #[rocket::main]
