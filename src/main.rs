@@ -1,21 +1,20 @@
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use rocket::{
-    catch, catchers, get, post, routes,
+    catch, catchers, get,
+    http::Status,
+    post,
+    request::{FromRequest, Outcome},
+    routes,
     serde::{
-        json::{serde_json::json, Value},
+        json::{serde_json::json, Json, Value},
         Deserialize, Serialize,
     },
 };
 
-mod auth;
-mod router;
-
-// use crate::module::Claims;
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use rocket::http::Status;
-use rocket::request::{FromRequest, Outcome};
-
-pub const KEY: &[u8] = b"secret";
-
+mod models;
+mod routes;
+mod services;
+mod utils;
 // #[derive(Debug)]
 // pub struct Token;
 // // Bearer Token
@@ -57,54 +56,21 @@ pub const KEY: &[u8] = b"secret";
 //     }
 // }
 
-#[derive(Debug, Serialize, Deserialize)]
-#[serde(crate = "rocket::serde")]
-struct Claims {
-    sub: String,
-    company: String,
-    exp: usize,
-}
-
-fn get_token() -> String {
-    let claims = Claims {
-        sub: "990902".to_string(),
-        company: "HAKUREI".to_string(),
-        exp: 86400,
-    };
-    let token: String = match encode(&Header::default(), &claims, &EncodingKey::from_secret(KEY)) {
-        Ok(t) => t,
-        Err(_) => panic!(),
-    };
-    token
-}
-// struct BasicAuthStruct {
-//     username: String,
-//     password: String,
+// #[post("/login", format = "application/json", data = "<basic_auth>")]
+// async fn login_user(basic_auth: Json<models::user::BasicAuthStruct>) -> Value {
+//     print!("{:?}", basic_auth);
+//     // 在数据库中查询 用户是否存在，存在就返回她的 id， 将id 给生成 token；
+//     let user_id: String = "67676916371637216371963".to_string();
+//     let token = get_token(&user_id);
+//     json!({ "token": token})
 // }
-
-// impl BasicAuthStruct {
-//     fn from_header(header: &str) -> Option<BasicAuthStruct> {
-//         let split_vec = header.split_whitespace().collect::<Vec<_>>();
-//     }
-// }
-
-#[post("/login", data = "<a>")]
-async fn login_user(a: String) -> Value {
-    let token = get_token();
-    json!({ "token": token})
-}
-
-#[catch(404)]
-async fn not_found_url() -> Value {
-    json!("url not found")
-}
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     rocket::build()
-        .mount("/user", routes![login_user])
+        .mount("/user", routes![routes::user_routes::login_user])
         // .mount("/", routes![router::get_token, router::get_token_test])
-        .register("/", catchers![not_found_url])
+        .register("/", catchers![routes::error_routes::not_found_url])
         .launch()
         .await?;
     Ok(())
