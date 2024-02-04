@@ -1,21 +1,12 @@
-use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
-use rocket::{
-    catch, catchers, get,
-    http::Status,
-    post,
-    request::{FromRequest, Outcome},
-    routes,
-    serde::{
-        json::{serde_json::json, Json, Value},
-        Deserialize, Serialize,
-    },
-};
+use rocket::{catchers, routes};
 
-mod handlers;
 mod models;
+mod response;
 mod routes;
 mod services;
 mod utils;
+
+use routes::user_routes;
 // #[derive(Debug)]
 // pub struct Token;
 // // Bearer Token
@@ -59,9 +50,12 @@ mod utils;
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    models::db_conn::get_db_conn();
     rocket::build()
-        .mount("/user", routes![routes::user_routes::login_user])
-        // .mount("/", routes![router::get_token, router::get_token_test])
+        .mount(
+            "/user",
+            routes![user_routes::login_user, user_routes::register_user,],
+        )
         .register("/", catchers![routes::error_routes::not_found_url])
         .launch()
         .await?;

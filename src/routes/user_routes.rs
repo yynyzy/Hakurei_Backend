@@ -1,18 +1,30 @@
-use rocket::{
-    post,
-    serde::{json::Json, Deserialize, Serialize},
+use rocket::{post, serde::json::Json};
+
+use crate::{
+    models::user,
+    response::{api_response::ApiResponse, response_obj},
+    services::user_services,
+    utils,
 };
 
-use crate::{handlers::api_response::ApiResponse, models::user, services::user_services, utils};
-
-#[derive(Serialize)]
-#[serde(crate = "rocket::serde")]
-pub struct LoginResponse {
-    pub token: String,
+#[post("/register", format = "application/json", data = "<register_params>")]
+pub async fn register_user(
+    register_params: Json<user::RegisterUserStruct>,
+) -> ApiResponse<response_obj::ResponseTokenStruct> {
+    print!("{:?}", register_params);
+    // if !user_services::find_user_by_basic_auth().await {
+    //     // return json!({ "error": "没找到用户"});
+    // }
+    let user_id: String = "67676916371637216371963".to_string();
+    let token = utils::auth::get_token(&user_id);
+    ApiResponse::success(response_obj::ResponseTokenStruct { token })
 }
-#[post("/login", format = "application/json", data = "<basic_auth>")]
-pub async fn login_user(basic_auth: Json<user::BasicAuthStruct>) -> ApiResponse<LoginResponse> {
-    print!("{:?}", basic_auth);
+
+#[post("/login", format = "application/json", data = "<login_params>")]
+pub async fn login_user(
+    login_params: Json<user::LoginUserStruct>,
+) -> ApiResponse<response_obj::ResponseTokenStruct> {
+    print!("{:?}", login_params);
     if !user_services::find_user_by_basic_auth().await {
         // return json!({ "error": "没找到用户"});
     }
@@ -20,5 +32,5 @@ pub async fn login_user(basic_auth: Json<user::BasicAuthStruct>) -> ApiResponse<
     let user_id: String = "67676916371637216371963".to_string();
 
     let token = utils::auth::get_token(&user_id);
-    ApiResponse::success(LoginResponse { token })
+    ApiResponse::success(response_obj::ResponseTokenStruct { token })
 }

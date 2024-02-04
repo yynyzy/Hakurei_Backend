@@ -1,15 +1,15 @@
 use rocket::serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 #[serde(crate = "rocket::serde")]
-
-pub struct BasicAuthStruct {
+pub struct RegisterUserStruct {
     pub username: String,
     pub password: String,
 }
 
-// impl BasicAuthStruct {
-//     fn from_header(header: &str) -> Option<BasicAuthStruct> {
-//         let split_vec = header.split_whitespace().collect::<Vec<_>>();
-//     }
-// }
+#[derive(Serialize, Deserialize, Debug)]
+#[serde(crate = "rocket::serde")]
+pub struct LoginUserStruct {
+    pub username: String,
+    pub password: String,
+}

@@ -33,7 +33,6 @@ impl<T> ApiResponse<T> {
 }
 
 impl<'r, T: Serialize> Responder<'r, 'static> for ApiResponse<T> {
-    // fn respond_to(self, _: &'r Request<'_>) -> Result<Response<'static>, Status> {
     fn respond_to(self, _: &'r Request<'_>) -> Result<'static> {
         let json_str = serde_json::to_string(&self).map_err(|e| {
             eprintln!("Error serializing JSON: {:?}", e);
