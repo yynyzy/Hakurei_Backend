@@ -1,2 +1,2 @@
-pub mod db_conn;
+pub mod mysql_conn;
 pub mod user;

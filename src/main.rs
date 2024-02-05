@@ -50,7 +50,7 @@ use routes::user_routes;
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    models::db_conn::get_db_conn();
+    // models::mysql_conn::get_db_conn();
     rocket::build()
         .mount(
             "/user",

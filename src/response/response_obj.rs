@@ -1,7 +1,6 @@
-use rocket::serde::{Deserialize, Serialize};
+use rocket::serde::Serialize;
 
-#[derive(Serialize, Deserialize)]
-#[serde(crate = "rocket::serde")]
+#[derive(Serialize)]
 pub struct ResponseTokenStruct {
     pub token: String,
 }
