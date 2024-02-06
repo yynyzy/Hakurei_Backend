@@ -1,5 +1,5 @@
 use chrono::{Duration, Utc};
-use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use rocket::{
     http::Status,
     request::{FromRequest, Outcome},
@@ -9,12 +9,6 @@ use rocket::{
 
 pub const KEY: &[u8] = b"secret";
 
-// #[derive(Debug, Serialize, Deserialize)]
-// struct Claims {
-//     sub: String,
-//     company: String,
-//     exp: usize,
-// }
 #[derive(Debug, Serialize, Deserialize)]
 
 pub struct BasicAuth {
@@ -31,19 +25,14 @@ impl BasicAuth {
         if split_vec[0] != "Bearer" {
             return None;
         }
-        print!("split_vec {:?} ", split_vec[1]);
-
         Self::from_jwt(split_vec[1])
     }
 
     fn from_jwt(token_string: &str) -> Option<BasicAuth> {
-        let mut val = Validation::default();
-        // val.sub = Some("67676916371637216371963".to_string());
         match decode::<BasicAuth>(
             token_string,
             &DecodingKey::from_secret(KEY),
-            &val,
-            // &Validation::new(Algorithm::HS256),
+            &Validation::default(),
         ) {
             Ok(c) => {
                 println!("ExpTime:{:?}", c);

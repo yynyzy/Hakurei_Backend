@@ -11,7 +11,7 @@ use crate::{
 pub async fn register_user(
     register_params: Json<user::RegisterUserStruct>,
     _auth_guard: auth::BasicAuth,
-) -> ApiResponse<'static, response_obj::ResponseTokenStruct> {
+) -> ApiResponse<response_obj::ResponseTokenStruct> {
     print!("{:?}", register_params);
     print!("auth_guard {:?}", _auth_guard);
     // if !user_services::find_user_by_basic_auth().await {
@@ -24,8 +24,8 @@ pub async fn register_user(
 #[post("/login", format = "application/json", data = "<login_params>")]
 pub async fn login_user(
     login_params: Json<user::LoginUserStruct>,
-) -> ApiResponse<'static, response_obj::ResponseTokenStruct> {
-    // print!("{:?}", login_params);
+) -> ApiResponse<response_obj::ResponseTokenStruct> {
+    print!("{:?}", login_params);
     if !user_services::find_user_by_basic_auth().await {
         // return json!({ "error": "没找到用户"});
     }

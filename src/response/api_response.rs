@@ -1,5 +1,5 @@
 use rocket::{
-    http::{ContentType, Status},
+    http::{self, ContentType, Status},
     response::{Responder, Response, Result},
     serde::{json::serde_json, Serialize},
     Request,
@@ -7,22 +7,22 @@ use rocket::{
 use std::io::Cursor;
 
 #[derive(Debug, Serialize)]
-pub struct ApiResponse<'r, T> {
-    status: u16,
-    message: &'r str,
+pub struct ApiResponse<T> {
+    status: Status,
+    message: String,
     data: Option<T>,
 }
 
-impl<'r, T> ApiResponse<'r, T> {
+impl<T> ApiResponse<T> {
     pub fn success(data: T) -> Self {
         ApiResponse {
-            status: 200,
-            message: "Success",
+            status: Status::Ok,
+            message: "Success".to_owned(),
             data: Some(data),
         }
     }
 
-    pub fn error(status: u16, message: &'r str) -> Self {
+    pub fn error(status: Status, message: String) -> Self {
         ApiResponse {
             status,
             message,
@@ -31,8 +31,8 @@ impl<'r, T> ApiResponse<'r, T> {
     }
 }
 
-impl<'r, T: Serialize> Responder<'r, 'static> for ApiResponse<'r, T> {
-    fn respond_to(self, _: &'r Request<'_>) -> Result<'static> {
+impl<'a, T: Serialize> Responder<'a, 'static> for ApiResponse<T> {
+    fn respond_to(self, _: &'a Request<'_>) -> Result<'static> {
         let json_str = serde_json::to_string(&self).map_err(|e| {
             eprintln!("Error serializing JSON: {:?}", e);
             Status::InternalServerError

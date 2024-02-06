@@ -1,4 +1,7 @@
-use rocket::serde::{Deserialize, Serialize};
+use rocket::{
+    serde::{Deserialize, Serialize},
+    FromForm,
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct RegisterUserStruct {
