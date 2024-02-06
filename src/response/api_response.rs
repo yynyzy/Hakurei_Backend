@@ -1,5 +1,5 @@
 use rocket::{
-    http::{self, ContentType, Status},
+    http::{ContentType, Status},
     response::{Responder, Response, Result},
     serde::{json::serde_json, Serialize},
     Request,

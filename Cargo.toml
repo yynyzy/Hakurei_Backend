@@ -1,5 +1,5 @@
 [package]
-name = "Hakurei-Backend"
+name = "hakurei_backend"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 rocket = { version = "0.5.0", features = ["json"] }
+sqlx = { version = "*", default-features = false, features = ["mysql", "macros","runtime-tokio"]}
 serde = { version = "*", features = ["derive"]}
 chrono = { version = "*"}
 mysql = "*"
