@@ -21,7 +21,9 @@ impl<T> ApiResponse<T> {
             data: Some(data),
         }
     }
+}
 
+impl ApiResponse<()> {
     pub fn error(status: Status, message: String) -> Self {
         ApiResponse {
             status,

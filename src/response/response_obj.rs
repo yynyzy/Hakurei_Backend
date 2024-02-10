@@ -1,6 +1,3 @@
-use rocket::serde::Serialize;
+// use rocket::serde::Serialize;
 
-#[derive(Serialize)]
-pub struct ResponseTokenStruct {
-    pub token: String,
-}
+// use crate::models::user::UserModel;
