@@ -1,7 +1,7 @@
 -- Add migration script here
 -- 创建用户表
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` VARCHAR(36) NOT NULL,
   `username` varchar(50) NOT NULL,
   `password` varchar(100) DEFAULT NULL,
 	`salt` varchar(100) DEFAULT NULL,
@@ -17,9 +17,9 @@ CREATE TABLE `users` (
 
 
 -- 注入测试账户
--- insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `isDeleted`) values('1','admin','123456', '', 'super@aliyun.com','18677778888','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
--- insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `isDeleted`) values('2','zhangsan','123456', '', 'zhangsan@gmail.com','13966667777','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
--- insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `isDeleted`) values('3','lisi','123456', '', 'lisi@gmail.com','13966667778','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
+insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `deleted`) values('111','admin','123456', '', 'super@aliyun.com','18677778888','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
+insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `deleted`) values('222','zhangsan','123456', '', 'zhangsan@gmail.com','13966667777','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
+insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `deleted`) values('333','lisi','123456', '', 'lisi@gmail.com','13966667778','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
 
 
 -- --  创建角色表

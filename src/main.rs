@@ -7,7 +7,7 @@ mod routes;
 mod services;
 mod utils;
 
-use routes::user_routes;
+use routes::{error_routes, user_routes};
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -20,7 +20,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 user_routes::register_user,
             ],
         )
-        .register("/", catchers![routes::error_routes::not_found_url])
+        .register(
+            "/",
+            catchers![error_routes::not_found, error_routes::internal_server_error],
+        )
         .launch()
         .await?;
     Ok(())
