@@ -7,15 +7,15 @@ use rocket::{
 use std::io::Cursor;
 
 #[derive(Debug, Serialize)]
-pub struct ApiResponse<'a, T> {
+pub struct CustomResponse<'a, T> {
     status: Status,
     message: &'a str,
     data: Option<T>,
 }
 
-impl<'a, T> ApiResponse<'a, T> {
+impl<'a, T> CustomResponse<'a, T> {
     pub fn success(data: T) -> Self {
-        ApiResponse {
+        CustomResponse {
             status: Status::Ok,
             message: "Success",
             data: Some(data),
@@ -23,9 +23,9 @@ impl<'a, T> ApiResponse<'a, T> {
     }
 }
 
-impl<'a> ApiResponse<'a, ()> {
+impl<'a> CustomResponse<'a, ()> {
     pub fn error(status: Status, message: &'a str) -> Self {
-        ApiResponse {
+        CustomResponse {
             status,
             message,
             data: None,
@@ -33,7 +33,7 @@ impl<'a> ApiResponse<'a, ()> {
     }
 }
 
-impl<'a, T: Serialize> Responder<'a, 'static> for ApiResponse<'a, T> {
+impl<'a, T: Serialize> Responder<'a, 'static> for CustomResponse<'a, T> {
     fn respond_to(self, _: &'a Request<'_>) -> Result<'static> {
         let json_str = serde_json::to_string(&self).map_err(|e| {
             eprintln!("Error serializing JSON: {:?}", e);

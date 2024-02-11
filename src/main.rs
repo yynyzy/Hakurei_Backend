@@ -1,7 +1,8 @@
 use rocket::{catchers, routes};
 
+mod auth;
+mod core;
 mod models;
-mod response;
 mod routes;
 mod services;
 mod utils;
