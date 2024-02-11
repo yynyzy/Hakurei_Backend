@@ -43,11 +43,10 @@ impl BasicAuth {
     }
 
     pub fn get_token(user_id: &str) -> String {
-        // let exp = Utc::now() + Duration::seconds(86400);
         let exp = Utc::now() + Duration::hours(24);
         let basic_auth = BasicAuth {
             sub: user_id.to_string(),
-            exp: exp.timestamp(), // exp: Duration::seconds(86400),
+            exp: exp.timestamp(),
         };
         let token: String = encode(
             &Header::default(),
@@ -66,7 +65,6 @@ impl<'r> FromRequest<'r> for BasicAuth {
         let base_auth = request.headers().get_one("Authorization");
         if let Some(base_auth) = base_auth {
             if let Some(auth) = Self::from_request(base_auth) {
-                print!("base_auth {:?} ", auth);
                 return Outcome::Success(auth);
             }
         }
