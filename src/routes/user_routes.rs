@@ -25,18 +25,24 @@ pub async fn register_user(
     register_params: Json<user::RegisterUserStruct>,
 ) -> Result<CustomResponse<'static, ResponseTokenStruct>, CustomResponse<'static, ()>> {
     let register_params = register_params.into_inner();
-    print!("{:?}", register_params);
     let pool = models::mysql_conn::get_db_conn_pool().await;
     let user = UserModel::find_by_username(&pool, &register_params.username).await;
-    user_services::register_user(register_params).await;
-    match user {
-        Some(_) => Ok(CustomResponse::success(ResponseTokenStruct {
-            token: auth::BasicAuth::get_token("67676916371637216371963"),
-        })),
-        None => Err(CustomResponse::error(
+    if user.is_none() {
+        let result = user_services::register_user(register_params).await;
+        match result {
+            Ok(v) => Ok(CustomResponse::success(ResponseTokenStruct {
+                token: auth::BasicAuth::get_token(&v),
+            })),
+            Err(_) => Err(CustomResponse::error(
+                Status::InternalServerError,
+                constants::CREATE_USER_EXITS,
+            )),
+        }
+    } else {
+        Err(CustomResponse::error(
             Status::Conflict,
             constants::USER_EXITS,
-        )),
+        ))
     }
 }
 

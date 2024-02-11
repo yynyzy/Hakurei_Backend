@@ -20,33 +20,28 @@ pub struct UserModel {
 }
 
 impl UserModel {
-    pub async fn create_one_user(pool: &Pool<MySql>, user: UserModel) {
+    pub async fn create_one_user(pool: &Pool<MySql>, user: UserModel) -> Result<String, ()> {
         let query = "
  INSERT INTO users (id, username, password, email, phone, salt, status, avatar, deleted)
  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         let result = sqlx::query(query)
-            .bind(user.id)
-            .bind(user.username)
-            .bind(user.password)
-            .bind(user.email)
-            .bind(user.phone)
-            .bind(user.salt)
-            .bind(user.status)
-            .bind(user.avatar)
-            .bind(user.deleted)
+            .bind(&user.id)
+            .bind(&user.username)
+            .bind(&user.password)
+            .bind(&user.email)
+            .bind(&user.phone)
+            .bind(&user.salt)
+            .bind(&user.status)
+            .bind(&user.avatar)
+            .bind(&user.deleted)
             .execute(pool)
-            .await;
-
-        match result {
-            Ok(v) => {
-                // 成功插入用户
-                println!("User inserted successfully {:?}", v);
-            }
-            Err(err) => {
-                // 处理错误
-                eprintln!("Error inserting user: {:?}", err);
-            }
+            .await
+            .unwrap();
+        if result.rows_affected() > 0 {
+            Ok(user.id.clone())
+        } else {
+            Err(())
         }
     }
 
@@ -58,7 +53,7 @@ impl UserModel {
         users
     }
 
-    pub async fn find_by_username(pool: &Pool<MySql>, username: &String) -> Option<UserModel> {
+    pub async fn find_by_username(pool: &Pool<MySql>, username: &str) -> Option<UserModel> {
         let user: Option<UserModel> =
             sqlx::query_as::<_, UserModel>("SELECT * FROM users WHERE username = ?")
                 .bind(username)
