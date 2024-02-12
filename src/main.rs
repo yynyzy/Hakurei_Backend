@@ -12,8 +12,6 @@ use routes::{error_routes, user_routes};
 
 #[rocket::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // let url: String = env::var("REDIS").expect("no redis url");
-    // println!("url = {}", url);
     let pool = RedisManager::redis_conn().await;
     rocket::build()
         .manage(pool)

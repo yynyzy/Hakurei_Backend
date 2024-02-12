@@ -1,3 +1,4 @@
+use crate::core::db_manager::redis_manager::RedisManager;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use rocket::{
@@ -17,15 +18,31 @@ pub struct BasicAuth {
 }
 
 impl BasicAuth {
-    fn from_request(header: &str) -> Option<BasicAuth> {
+    async fn from_request(header: &str) -> Result<BasicAuth, ()> {
         let split_vec = header.split_whitespace().collect::<Vec<_>>();
         if split_vec.len() != 2 {
-            return None;
+            return Err(());
         }
         if split_vec[0] != "Bearer" {
-            return None;
+            return Err(());
         }
-        Self::from_jwt(split_vec[1])
+        let token = split_vec[1];
+        let jwt_decrypt = Self::from_jwt(token);
+        match jwt_decrypt {
+            Some(v) => {
+                let redis_pool = RedisManager::redis_conn().await;
+                let result = RedisManager::get_value(&v.sub, redis_pool).await;
+                println!("id:{:?}", result);
+                match result {
+                    Ok(v2) => {
+                        println!("a === {}", v2);
+                        Ok(v)
+                    }
+                    Err(_) => Err(()),
+                }
+            }
+            None => Err(()),
+        }
     }
 
     fn from_jwt(token_string: &str) -> Option<BasicAuth> {
@@ -35,13 +52,13 @@ impl BasicAuth {
             &Validation::default(),
         ) {
             Ok(c) => {
-                println!("ExpTime:{:?}", c);
                 return Some(c.claims);
             }
             Err(_) => None,
         }
     }
 
+    // 根据 userId 生成 token
     pub fn get_token(user_id: &str) -> String {
         let exp = Utc::now() + Duration::hours(24);
         let basic_auth = BasicAuth {
@@ -64,7 +81,7 @@ impl<'r> FromRequest<'r> for BasicAuth {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         let base_auth = request.headers().get_one("Authorization");
         if let Some(base_auth) = base_auth {
-            if let Some(auth) = Self::from_request(base_auth) {
+            if let Ok(auth) = Self::from_request(base_auth).await {
                 return Outcome::Success(auth);
             }
         }

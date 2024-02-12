@@ -1,6 +1,6 @@
 use dotenv::dotenv;
 use r2d2::Pool;
-use redis::Client;
+use redis::{Client, Commands, RedisError};
 use rocket::State;
 
 use std::{
@@ -29,5 +29,11 @@ impl RedisManager {
         let mut pconn = pool.get().unwrap();
         let conn = pconn.deref_mut();
         redis::Cmd::set(key, value).query::<String>(conn).unwrap()
+    }
+
+    pub async fn get_value(key: &str, redis_pool: Pool<Client>) -> Result<String, RedisError> {
+        let mut pconn = redis_pool.get().unwrap();
+        let conn = pconn.deref_mut();
+        conn.get(key)
     }
 }
