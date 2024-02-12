@@ -62,6 +62,22 @@ impl UserModel {
                 .unwrap();
         user
     }
+
+    pub async fn find_by_username_and_password(
+        pool: &Pool<MySql>,
+        username: &str,
+        password: &str,
+    ) -> Option<UserModel> {
+        let user: Option<UserModel> = sqlx::query_as::<_, UserModel>(
+            "SELECT * FROM users WHERE username = ? AND password = ?",
+        )
+        .bind(username)
+        .bind(password)
+        .fetch_optional(pool)
+        .await
+        .unwrap();
+        user
+    }
 }
 
 #[derive(Deserialize, Debug)]
