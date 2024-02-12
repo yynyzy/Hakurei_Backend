@@ -36,7 +36,11 @@ impl BasicAuth {
                 match result {
                     Ok(v2) => {
                         println!("a === {}", v2);
-                        Ok(v)
+                        if v2 == token {
+                            Ok(v)
+                        } else {
+                            Err(())
+                        }
                     }
                     Err(_) => Err(()),
                 }

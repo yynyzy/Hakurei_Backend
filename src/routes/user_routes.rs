@@ -59,7 +59,6 @@ pub async fn login_user(
     login_params: Json<user::LoginUserStruct>,
     redis_pool: &State<Pool<Client>>,
 ) -> Result<CustomResponse<'static, ResponseTokenStruct>, CustomResponse<'static, ()>> {
-    print!("{:?}", login_params);
     let pool = mysql_conn::get_db_conn_pool().await;
     let user = UserModel::find_by_username_and_password(
         &pool,
