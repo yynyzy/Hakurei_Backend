@@ -1,2 +1,2 @@
-pub mod mysql_conn;
+pub mod mysql_manager;
 pub mod redis_manager;

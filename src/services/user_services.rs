@@ -1,11 +1,11 @@
 use crate::{
-    core::db_manager::mysql_conn,
+    core::db_manager::mysql_manager,
     models::user::{self, UserModel},
     utils::uuid::UUID,
 };
 
 pub async fn register_user(params: user::RegisterUserStruct) -> Result<String, ()> {
-    let pool: sqlx::Pool<sqlx::MySql> = mysql_conn::get_db_conn_pool().await;
+    let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
     let user = UserModel {
         id: UUID::generate_uuid(),
         username: params.username,

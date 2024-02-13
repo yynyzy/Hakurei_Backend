@@ -31,7 +31,7 @@ impl BasicAuth {
         match jwt_decrypt {
             Some(v) => {
                 let redis_pool = RedisManager::redis_conn().await;
-                let result = RedisManager::get_value(&v.sub, redis_pool).await;
+                let result = RedisManager::get_value(&v.sub, &redis_pool).await;
                 println!("id:{:?}", result);
                 match result {
                     Ok(v2) => {

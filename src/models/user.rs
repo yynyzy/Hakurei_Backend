@@ -45,11 +45,11 @@ impl UserModel {
         }
     }
 
-    pub async fn find_all(pool: &Pool<MySql>) -> Vec<UserModel> {
+    pub async fn find_all(pool: &Pool<MySql>) -> Option<Vec<UserModel>> {
         let users = sqlx::query_as::<_, UserModel>("SELECT * FROM users")
             .fetch_all(pool)
             .await
-            .unwrap();
+            .ok();
         users
     }
 
@@ -68,7 +68,7 @@ impl UserModel {
         username: &str,
         password: &str,
     ) -> Option<UserModel> {
-        let user: Option<UserModel> = sqlx::query_as::<_, UserModel>(
+        let user = sqlx::query_as::<_, UserModel>(
             "SELECT * FROM users WHERE username = ? AND password = ?",
         )
         .bind(username)
