@@ -2,10 +2,7 @@ use dotenv::dotenv;
 use r2d2::Pool;
 use redis::{Client, Commands, RedisError};
 
-use std::{
-    env,
-    ops::{Deref, DerefMut},
-};
+use std::{env, ops::DerefMut};
 
 pub struct RedisManager;
 
@@ -25,7 +22,6 @@ impl RedisManager {
         pool: &Pool<Client>,
     ) -> Result<String, RedisError> {
         let mut pconn = pool.get().unwrap();
-        let conn = pconn.deref_mut();
         let conn = pconn.deref_mut();
         conn.set(key, value)
     }

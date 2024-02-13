@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use rocket::serde::{Deserialize, Serialize};
-use sqlx::{MySql, Pool};
+
+use crate::core::db_manager::mysql_manager;
 
 #[derive(Serialize, Deserialize, sqlx::FromRow, Debug, Clone)]
 pub struct UserModel {
@@ -20,7 +21,8 @@ pub struct UserModel {
 }
 
 impl UserModel {
-    pub async fn create_one_user(pool: &Pool<MySql>, user: UserModel) -> Result<String, ()> {
+    pub async fn create_user(user: UserModel) -> Option<String> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let query = "
  INSERT INTO users (id, username, password, email, phone, salt, status, avatar, deleted)
  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -35,45 +37,48 @@ impl UserModel {
             .bind(&user.status)
             .bind(&user.avatar)
             .bind(&user.deleted)
-            .execute(pool)
+            .execute(&pool)
             .await
             .unwrap();
         if result.rows_affected() > 0 {
-            Ok(user.id.clone())
+            Some(user.id.clone())
         } else {
-            Err(())
+            None
         }
     }
 
-    pub async fn find_all(pool: &Pool<MySql>) -> Option<Vec<UserModel>> {
+    pub async fn find_all() -> Option<Vec<UserModel>> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let users = sqlx::query_as::<_, UserModel>("SELECT * FROM users")
-            .fetch_all(pool)
+            .fetch_all(&pool)
             .await
             .ok();
         users
     }
 
-    pub async fn find_by_username(pool: &Pool<MySql>, username: &str) -> Option<UserModel> {
+    pub async fn find_by_username(username: &str) -> Option<UserModel> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let user: Option<UserModel> =
             sqlx::query_as::<_, UserModel>("SELECT * FROM users WHERE username = ?")
                 .bind(username)
-                .fetch_optional(pool)
+                .fetch_optional(&pool)
                 .await
                 .unwrap();
         user
     }
 
     pub async fn find_by_username_and_password(
-        pool: &Pool<MySql>,
         username: &str,
         password: &str,
     ) -> Option<UserModel> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
+
         let user = sqlx::query_as::<_, UserModel>(
             "SELECT * FROM users WHERE username = ? AND password = ?",
         )
         .bind(username)
         .bind(password)
-        .fetch_optional(pool)
+        .fetch_optional(&pool)
         .await
         .unwrap();
         user

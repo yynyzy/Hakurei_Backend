@@ -35,7 +35,7 @@ impl<'a> CustomResponse<'a, ()> {
 
 impl<'a, T: Serialize> Responder<'a, 'static> for CustomResponse<'a, T> {
     fn respond_to(self, _: &'a Request<'_>) -> Result<'static> {
-        let json_str = serde_json::to_string(&self).map_err(|e| Status::InternalServerError)?;
+        let json_str = serde_json::to_string(&self).map_err(|_e| Status::InternalServerError)?;
         Response::build()
             .header(ContentType::JSON)
             .status(Status::Ok)
