@@ -4,8 +4,8 @@ use crate::{
     auth::auth,
     core::{
         common::constants::{self},
+        config::custom_response::CustomResponse,
         db_manager::redis_manager::RedisManager,
-        response::custom_response::CustomResponse,
     },
     models::user::{self, UserModel},
     services::user_services,

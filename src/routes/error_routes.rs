@@ -1,6 +1,6 @@
 use rocket::{catch, http::Status};
 
-use crate::core::{common::constants, response::custom_response::CustomResponse};
+use crate::core::{common::constants, config::custom_response::CustomResponse};
 
 #[catch(404)]
 pub async fn not_found() -> CustomResponse<()> {
