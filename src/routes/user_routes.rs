@@ -3,7 +3,7 @@ use std::ops::Deref;
 use crate::{
     auth::auth,
     core::{
-        common::constants::{self, INTERNAL_SERVER_ERROR, USER_NOT_FOUND},
+        common::constants::{self},
         db_manager::redis_manager::RedisManager,
         response::custom_response::CustomResponse,
     },
@@ -19,14 +19,14 @@ use serde::Serialize;
 #[get("/")]
 pub async fn get_all_users(
     _auth_guard: auth::BasicAuth,
-) -> Result<CustomResponse<'static, Vec<UserModel>>, CustomResponse<'static, ()>> {
+) -> Result<CustomResponse<Vec<UserModel>>, CustomResponse<()>> {
     let users = UserModel::find_all().await;
     if let Some(users) = users {
         return Ok(CustomResponse::success(users));
     };
     Err(CustomResponse::error(
         Status::InternalServerError,
-        INTERNAL_SERVER_ERROR,
+        constants::INTERNAL_SERVER_ERROR.to_owned(),
     ))
 }
 
@@ -34,13 +34,13 @@ pub async fn get_all_users(
 pub async fn register_user(
     register_params: Json<user::RegisterUserStruct>,
     redis_pool: &State<Pool<Client>>,
-) -> Result<CustomResponse<'static, ResponseTokenStruct>, CustomResponse<'static, ()>> {
+) -> Result<CustomResponse<ResponseTokenStruct>, CustomResponse<()>> {
     let register_params = register_params.into_inner();
     let user = UserModel::find_by_username(&register_params.username).await;
     if let Some(_) = user {
         return Err(CustomResponse::error(
             Status::Conflict,
-            constants::USER_EXITS,
+            constants::USER_EXITS.to_owned(),
         ));
     }
     let v = user_services::register_user(register_params).await;
@@ -55,7 +55,7 @@ pub async fn register_user(
     }
     Err(CustomResponse::error(
         Status::InternalServerError,
-        constants::CREATE_USER_FAILED,
+        constants::CREATE_USER_FAILED.to_owned(),
     ))
 }
 
@@ -63,7 +63,7 @@ pub async fn register_user(
 pub async fn login_user(
     login_params: Json<user::LoginUserStruct>,
     redis_pool: &State<Pool<Client>>,
-) -> Result<CustomResponse<'static, ResponseTokenStruct>, CustomResponse<'static, ()>> {
+) -> Result<CustomResponse<ResponseTokenStruct>, CustomResponse<()>> {
     let user =
         UserModel::find_by_username_and_password(&login_params.username, &login_params.password)
             .await;
@@ -74,7 +74,10 @@ pub async fn login_user(
             .unwrap();
         return Ok(CustomResponse::success(ResponseTokenStruct { token }));
     }
-    Err(CustomResponse::error(Status::Unauthorized, USER_NOT_FOUND))
+    Err(CustomResponse::error(
+        Status::Unauthorized,
+        constants::USER_NOT_FOUND.to_owned(),
+    ))
 }
 
 #[derive(Serialize)]

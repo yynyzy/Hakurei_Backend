@@ -7,24 +7,24 @@ use rocket::{
 use std::io::Cursor;
 
 #[derive(Debug, Serialize)]
-pub struct CustomResponse<'a, T> {
+pub struct CustomResponse<T> {
     status: Status,
-    message: &'a str,
+    message: String,
     data: Option<T>,
 }
 
-impl<'a, T> CustomResponse<'a, T> {
+impl<T> CustomResponse<T> {
     pub fn success(data: T) -> Self {
         CustomResponse {
             status: Status::Ok,
-            message: "Success",
+            message: "Success".to_owned(),
             data: Some(data),
         }
     }
 }
 
-impl<'a> CustomResponse<'a, ()> {
-    pub fn error(status: Status, message: &'a str) -> Self {
+impl CustomResponse<()> {
+    pub fn error(status: Status, message: String) -> Self {
         CustomResponse {
             status,
             message,
@@ -33,8 +33,8 @@ impl<'a> CustomResponse<'a, ()> {
     }
 }
 
-impl<'a, T: Serialize> Responder<'a, 'static> for CustomResponse<'a, T> {
-    fn respond_to(self, _: &'a Request<'_>) -> Result<'static> {
+impl<'r, T: Serialize> Responder<'r, 'static> for CustomResponse<T> {
+    fn respond_to(self, _: &'r Request<'_>) -> Result<'static> {
         let json_str = serde_json::to_string(&self).map_err(|_e| Status::InternalServerError)?;
         Response::build()
             .header(ContentType::JSON)
