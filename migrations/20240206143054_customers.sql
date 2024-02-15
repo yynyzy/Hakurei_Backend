@@ -3,8 +3,8 @@
 CREATE TABLE `users` (
   `id` VARCHAR(36) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `password` varchar(100) DEFAULT NULL,
-	`salt` varchar(100) DEFAULT NULL,
+  `password` varchar(100) NOT NULL,
+  `role` INT(1) DEFAULT 3,
   `email` varchar(50) DEFAULT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `status` int(1) DEFAULT NULL,
@@ -17,10 +17,21 @@ CREATE TABLE `users` (
 
 
 -- 注入测试账户
-insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `deleted`) values('111','admin','123456', '', 'super@aliyun.com','18677778888','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
-insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `deleted`) values('222','zhangsan','123456', '', 'zhangsan@gmail.com','13966667777','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
-insert into `users` (`id`, `username`, `password`, `salt`, `email`, `phone`, `status`, `avatar`, `deleted`) values('333','lisi','123456', '', 'lisi@gmail.com','13966667778','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
+insert into `users` (`id`, `username`, `password`, `email`, `phone`, `status`, `avatar`, `deleted`) values('111','admin','123456', '', 'super@aliyun.com','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
 
+
+
+CREATE TABLE `blog` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `user_id` VARCHAR(36) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `content` longtext,
+  `status` tinyint(4) DEFAULT NULL,
+  `createdAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `updatedAt` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 -- --  创建角色表
 -- CREATE TABLE `roles` (

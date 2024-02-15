@@ -1,16 +1,15 @@
+use crate::core::db_manager::mysql_manager;
 use chrono::{DateTime, Utc};
 use rocket::serde::{Deserialize, Serialize};
-
-use crate::core::db_manager::mysql_manager;
 
 #[derive(Serialize, Deserialize, sqlx::FromRow, Debug, Clone)]
 pub struct UserModel {
     pub id: String,
     pub username: String,
     pub password: String,
+    pub role: Option<i8>, // 1 管理员， 2 普通用户， 3 游客
     pub email: Option<String>,
     pub phone: Option<String>,
-    pub salt: String,
     pub status: i8,
     pub avatar: Option<String>,
     pub deleted: i8,
@@ -24,16 +23,16 @@ impl UserModel {
     pub async fn create_user(user: UserModel) -> Option<String> {
         let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let query = "
- INSERT INTO users (id, username, password, email, phone, salt, status, avatar, deleted)
+ INSERT INTO users (id, username, password, role, email, phone, status, avatar, deleted)
  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         let result = sqlx::query(query)
             .bind(&user.id)
             .bind(&user.username)
             .bind(&user.password)
+            .bind(&user.role)
             .bind(&user.email)
             .bind(&user.phone)
-            .bind(&user.salt)
             .bind(&user.status)
             .bind(&user.avatar)
             .bind(&user.deleted)

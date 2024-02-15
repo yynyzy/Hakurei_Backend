@@ -12,8 +12,7 @@ use crate::{
 };
 use r2d2::Pool;
 use redis::Client;
-use rocket::State;
-use rocket::{get, http::Status, post, serde::json::Json};
+use rocket::{get, http::Status, post, serde::json::Json, State};
 use serde::Serialize;
 
 #[get("/")]

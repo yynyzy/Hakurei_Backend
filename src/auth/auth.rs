@@ -13,7 +13,7 @@ pub const KEY: &[u8] = b"secret";
 #[derive(Debug, Serialize, Deserialize)]
 
 pub struct BasicAuth {
-    sub: String,
+    pub sub: String,
     pub exp: i64,
 }
 
