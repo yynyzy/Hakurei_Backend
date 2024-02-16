@@ -18,13 +18,13 @@ pub struct BlogModel {
 }
 
 impl BlogModel {
-    pub async fn create_blog(user_id: &str, blog: BlogCreateRequestModel) -> Option<String> {
+    pub async fn create_one(blog: BlogCreateRequestModel) -> Option<()> {
         let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let query =
-            " INSERT INTO blog (user_id, title, description, content, status) VALUES (?, ?, ?, ?, ?)";
+            "INSERT INTO blog (user_id, title, description, content, status) VALUES (?, ?, ?, ?, ?)";
 
         let result = sqlx::query(query)
-            .bind(user_id)
+            .bind(&blog.user_id)
             .bind(&blog.title)
             .bind(&blog.description)
             .bind(&blog.content)
@@ -33,15 +33,27 @@ impl BlogModel {
             .await
             .unwrap();
         if result.rows_affected() > 0 {
-            Some(user_id.to_string())
+            Some(())
         } else {
             None
         }
+    }
+
+    pub async fn find_all() -> Option<Vec<BlogModel>> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
+        let query = "SELECT * FROM blog";
+
+        let blogs = sqlx::query_as::<_, BlogModel>(query)
+            .fetch_all(&pool)
+            .await
+            .ok();
+        blogs
     }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BlogCreateRequestModel {
+    pub user_id: Option<String>,
     pub title: String,
     pub description: String,
     pub content: String,

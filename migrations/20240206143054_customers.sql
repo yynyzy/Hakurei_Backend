@@ -17,7 +17,7 @@ CREATE TABLE `users` (
 
 
 -- 注入测试账户
-insert into `users` (`id`, `username`, `password`, `email`, `phone`, `status`, `avatar`, `deleted`) values('111','admin','123456', '', 'super@aliyun.com','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
+-- insert into `users` (`id`, `username`, `password`, `email`, `phone`, `status`, `avatar`, `deleted`) values('111','admin','123456', '', 'super@aliyun.com','1','https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif','0');
 
 
 

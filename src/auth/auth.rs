@@ -32,10 +32,8 @@ impl BasicAuth {
             Some(v) => {
                 let redis_pool = RedisManager::redis_conn().await;
                 let result = RedisManager::get_value(&v.sub, &redis_pool).await;
-                println!("id:{:?}", result);
                 match result {
                     Ok(v2) => {
-                        println!("a === {}", v2);
                         if v2 == token {
                             Ok(v)
                         } else {

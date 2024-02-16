@@ -25,7 +25,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 user_routes::register_user,
             ],
         )
-        .mount("/blog", routes![blog_routes::create_blog,])
+        .mount(
+            "/blog",
+            routes![blog_routes::create_one, blog_routes::get_blogs],
+        )
         .register(
             "/",
             catchers![error_routes::not_found, error_routes::internal_server_error],
