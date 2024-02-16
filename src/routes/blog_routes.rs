@@ -34,3 +34,17 @@ pub async fn get_blogs(
         constants::BLOGS_FIND_FAILED.to_owned(),
     ))
 }
+
+#[get("/list/my")]
+pub async fn get_blogs_by_myself(
+    auth_guard: auth::BasicAuth,
+) -> Result<CustomResponse<Vec<BlogModel>>, CustomResponse<()>> {
+    let blogs = BlogModel::find_by_user_id(auth_guard.sub.as_str()).await;
+    if let Some(blogs) = blogs {
+        return Ok(CustomResponse::success(blogs));
+    }
+    Err(CustomResponse::error(
+        Status::InternalServerError,
+        constants::BLOGS_FIND_FAILED.to_owned(),
+    ))
+}

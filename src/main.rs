@@ -27,7 +27,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         )
         .mount(
             "/blog",
-            routes![blog_routes::create_one, blog_routes::get_blogs],
+            routes![
+                blog_routes::create_one,
+                blog_routes::get_blogs,
+                blog_routes::get_blogs_by_myself
+            ],
         )
         .register(
             "/",
