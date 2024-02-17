@@ -6,3 +6,4 @@ pub const INTERNAL_SERVER_ERROR: &str = "internal server error";
 // blog_routes
 pub const BLOG_CREATED_FAILED: &str = "create blog error";
 pub const BLOGS_FIND_FAILED: &str = "find blogs error";
+pub const BLOGS_DELETE_FAILED: &str = "delete blogs error";

@@ -30,7 +30,9 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             routes![
                 blog_routes::create_one,
                 blog_routes::get_blogs,
-                blog_routes::get_blogs_by_myself
+                blog_routes::get_blogs_by_myself,
+                blog_routes::get_blog_by_id,
+                blog_routes::delete_blog_by_id,
             ],
         )
         .register(

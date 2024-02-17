@@ -51,7 +51,6 @@ impl BlogModel {
     }
 
     pub async fn find_by_user_id(user_id: &str) -> Option<Vec<BlogModel>> {
-        println!("user_id {}", user_id);
         let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let query = "SELECT * FROM blog WHERE user_id = ?";
         let blogs = sqlx::query_as::<_, BlogModel>(query)
@@ -60,6 +59,32 @@ impl BlogModel {
             .await
             .ok();
         blogs
+    }
+
+    pub async fn find_by_id(article_id: &str) -> Option<Vec<BlogModel>> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
+        let query = "SELECT * FROM blog WHERE id = ?";
+        let blog = sqlx::query_as::<_, BlogModel>(query)
+            .bind(article_id)
+            .fetch_all(&pool)
+            .await
+            .ok();
+        blog
+    }
+
+    pub async fn delete_by_id(article_id: &str) -> Option<()> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
+        let query = "DELETE FROM blog WHERE id = ?";
+        let result = sqlx::query(query)
+            .bind(article_id)
+            .execute(&pool)
+            .await
+            .unwrap();
+        if result.rows_affected() > 0 {
+            Some(())
+        } else {
+            None
+        }
     }
 }
 

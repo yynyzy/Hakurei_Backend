@@ -4,7 +4,7 @@ use crate::{
     models::blog::{self, BlogModel},
     services::blog_services,
 };
-use rocket::{get, http::Status, post, serde::json::Json};
+use rocket::{delete, get, http::Status, post, serde::json::Json};
 
 #[post("/create", format = "application/json", data = "<blog>")]
 pub async fn create_one(
@@ -46,5 +46,35 @@ pub async fn get_blogs_by_myself(
     Err(CustomResponse::error(
         Status::InternalServerError,
         constants::BLOGS_FIND_FAILED.to_owned(),
+    ))
+}
+
+#[get("/list/<id>")]
+pub async fn get_blog_by_id(
+    id: String,
+    _auth_guard: auth::BasicAuth,
+) -> Result<CustomResponse<Vec<BlogModel>>, CustomResponse<()>> {
+    let blog = BlogModel::find_by_id(id.as_str()).await;
+    if let Some(blog) = blog {
+        return Ok(CustomResponse::success(blog));
+    }
+    Err(CustomResponse::error(
+        Status::InternalServerError,
+        constants::BLOGS_FIND_FAILED.to_owned(),
+    ))
+}
+
+#[delete("/list/<id>")]
+pub async fn delete_blog_by_id(
+    id: String,
+    _auth_guard: auth::BasicAuth,
+) -> Result<CustomResponse<()>, CustomResponse<()>> {
+    let is_succeed = BlogModel::delete_by_id(id.as_str()).await;
+    if let Some(_) = is_succeed {
+        return Ok(CustomResponse::success(()));
+    }
+    Err(CustomResponse::error(
+        Status::InternalServerError,
+        constants::BLOGS_DELETE_FAILED.to_owned(),
     ))
 }
