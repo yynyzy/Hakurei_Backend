@@ -62,7 +62,7 @@ impl BasicAuth {
 
     // 根据 userId 生成 token
     pub fn get_token(user_id: &str) -> String {
-        let exp = Utc::now() + Duration::hours(24);
+        let exp = Utc::now() + Duration::hours(72);
         let basic_auth = BasicAuth {
             sub: user_id.to_string(),
             exp: exp.timestamp(),

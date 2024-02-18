@@ -49,7 +49,7 @@ pub async fn get_blogs_by_myself(
     ))
 }
 
-#[get("/list/<id>")]
+#[get("/<id>")]
 pub async fn get_blog_by_id(
     id: String,
     _auth_guard: auth::BasicAuth,
@@ -64,7 +64,7 @@ pub async fn get_blog_by_id(
     ))
 }
 
-#[delete("/list/<id>")]
+#[delete("/<id>")]
 pub async fn delete_blog_by_id(
     id: String,
     _auth_guard: auth::BasicAuth,
