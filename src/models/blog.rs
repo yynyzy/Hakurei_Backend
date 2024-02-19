@@ -21,10 +21,11 @@ impl BlogModel {
     pub async fn create_one(blog: BlogCreateRequestModel) -> Option<()> {
         let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let query =
-            "INSERT INTO blog (user_id, title, description, content, status) VALUES (?, ?, ?, ?, ?)";
+            "INSERT INTO blog (user_id, user_name, title, description, content, status) VALUES (?, ?, ?, ?, ?, ?)";
 
         let result = sqlx::query(query)
             .bind(&blog.user_id)
+            .bind(&blog.user_name)
             .bind(&blog.title)
             .bind(&blog.description)
             .bind(&blog.content)
@@ -72,7 +73,7 @@ impl BlogModel {
         blog
     }
 
-    pub async fn delete_by_id(article_id: &str) -> Option<()> {
+    pub async fn delete_by_id(article_id: i64) -> Option<()> {
         let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let query = "DELETE FROM blog WHERE id = ?";
         let result = sqlx::query(query)
@@ -86,11 +87,25 @@ impl BlogModel {
             None
         }
     }
+
+    // 通过 文章id 和用户 id查找文章
+    pub async fn find_by_uid_and_id(article_id: i64, user_id: &str) -> Option<Vec<BlogModel>> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
+        let query = "SELECT * FROM blog WHERE id = ? AND user_id = ?";
+        let exists = sqlx::query_as::<_, BlogModel>(query)
+            .bind(article_id)
+            .bind(user_id)
+            .fetch_all(&pool)
+            .await
+            .ok();
+        exists
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct BlogCreateRequestModel {
     pub user_id: Option<String>,
+    pub user_name: Option<String>,
     pub title: String,
     pub description: String,
     pub content: String,

@@ -11,7 +11,7 @@ pub async fn create_one(
     blog: Json<blog::BlogCreateRequestModel>,
     auth_guard: auth::BasicAuth,
 ) -> Result<CustomResponse<()>, CustomResponse<()>> {
-    let is_succeed = blog_services::create_one(auth_guard.sub, blog.into_inner()).await;
+    let is_succeed = blog_services::create_one(auth_guard.sub.as_str(), blog.into_inner()).await;
     if let Ok(is_succeed) = is_succeed {
         return Ok(CustomResponse::success(is_succeed));
     }
@@ -66,12 +66,20 @@ pub async fn get_blog_by_id(
 
 #[delete("/<id>")]
 pub async fn delete_blog_by_id(
-    id: String,
-    _auth_guard: auth::BasicAuth,
+    id: i64,
+    auth_guard: auth::BasicAuth,
 ) -> Result<CustomResponse<()>, CustomResponse<()>> {
-    let is_succeed = BlogModel::delete_by_id(id.as_str()).await;
-    if let Some(_) = is_succeed {
-        return Ok(CustomResponse::success(()));
+    let is_succeed = blog_services::delete_owner_article(id, auth_guard.sub.as_str()).await;
+    if let Ok(is_succeed) = is_succeed {
+        if is_succeed == 1 {
+            return Ok(CustomResponse::success(()));
+        }
+        if is_succeed == 2 {
+            return Err(CustomResponse::error(
+                Status::Forbidden,
+                constants::BLOGS_DELETE_FAILED_WITH_NO_PERMISSION.to_owned(),
+            ));
+        }
     }
     Err(CustomResponse::error(
         Status::InternalServerError,

@@ -46,6 +46,18 @@ impl UserModel {
         }
     }
 
+    pub async fn find_by_user_id(user_id: &str) -> Option<UserModel> {
+        let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
+        let query = "
+ SELECT * FROM users WHERE id = ?";
+        let user = sqlx::query_as::<_, UserModel>(query)
+            .bind(user_id)
+            .fetch_optional(&pool)
+            .await
+            .unwrap();
+        user
+    }
+
     pub async fn find_all() -> Option<Vec<UserModel>> {
         let pool: sqlx::Pool<sqlx::MySql> = mysql_manager::get_db_conn_pool().await;
         let users = sqlx::query_as::<_, UserModel>("SELECT * FROM users")
