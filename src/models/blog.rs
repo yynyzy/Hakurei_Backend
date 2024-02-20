@@ -7,6 +7,7 @@ use rocket::serde::{Deserialize, Serialize};
 pub struct BlogModel {
     pub id: i64,
     pub user_id: String,
+    pub user_name: String,
     pub title: String,
     pub description: String,
     pub content: String,

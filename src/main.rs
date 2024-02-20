@@ -20,6 +20,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .mount(
             "/user",
             routes![
+                user_routes::get_user_self_info,
                 user_routes::get_all_users,
                 user_routes::login_user,
                 user_routes::register_user,

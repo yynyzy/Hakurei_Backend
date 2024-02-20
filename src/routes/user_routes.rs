@@ -15,7 +15,21 @@ use redis::Client;
 use rocket::{get, http::Status, post, serde::json::Json, State};
 use serde::Serialize;
 
-#[get("/")]
+#[get("/info")]
+pub async fn get_user_self_info(
+    auth_guard: auth::BasicAuth,
+) -> Result<CustomResponse<UserModel>, CustomResponse<()>> {
+    let self_info = UserModel::find_by_user_id(auth_guard.sub.as_str()).await;
+    if let Some(self_info) = self_info {
+        return Ok(CustomResponse::success(self_info));
+    };
+    Err(CustomResponse::error(
+        Status::InternalServerError,
+        constants::INTERNAL_SERVER_ERROR.to_owned(),
+    ))
+}
+
+#[get("/list")]
 pub async fn get_all_users(
     _auth_guard: auth::BasicAuth,
 ) -> Result<CustomResponse<Vec<UserModel>>, CustomResponse<()>> {
